@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Game Theory Decision Tool</title>
+
+  <!-- PyScript -->
+  <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+  <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+
+  <!-- Custom CSS Styling -->
+  <style>
+    body {
+      font-family: "Segoe UI", sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      max-width: 500px;
+      width: 90%;
+    }
+
+    h1 {
+      text-align: center;
+      color: #4a90e2;
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-weight: 600;
+      margin-top: 10px;
+      display: block;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #4a90e2;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #357ab7;
+    }
+
+    #result {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 16px;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>🎯 Game Theory Helper</h1>
+
+    <label for="first">First Choice:</label>
+    <input id="first" type="text" placeholder="e.g. Studying in London">
+
+    <label for="second">Second Choice:</label>
+    <input id="second" type="text" placeholder="e.g. Studying in Paris">
+
+    <label for="outcomes_a">3 Outcomes for First Choice:</label>
+    <input id="outcomes_a" type="text" placeholder="e.g. friends fun love">
+
+    <label for="values_a">3 Values (1–10) for First Choice:</label>
+    <input id="values_a" type="text" placeholder="e.g. 7 6 8">
+
+    <label for="outcomes_b">3 Outcomes for Second Choice:</label>
+    <input id="outcomes_b" type="text" placeholder="e.g. adventure career romance">
+
+    <label for="values_b">3 Values (1–10) for Second Choice:</label>
+    <input id="values_b" type="text" placeholder="e.g. 5 9 6">
+
+    <button onclick="evaluate()">✨ Evaluate Best Choice</button>
+
+    <p id="result"></p>
+  </div>
+
+  <py-script>
+def evaluate():
+    first = Element("first").element.value
+    second = Element("second").element.value
+    outcomes_a = Element("outcomes_a").element.value.split()
+    values_a = list(map(int, Element("values_a").element.value.split()))
+    outcomes_b = Element("outcomes_b").element.value.split()
+    values_b = list(map(int, Element("values_b").element.value.split()))
+
+    if len(values_a) != 3 or len(values_b) != 3:
+        result = "❗ You must enter exactly 3 values for each choice."
+    else:
+        max_a = max(values_a)
+        max_b = max(values_b)
+        best_choice = first if max_a >= max_b else second
+        result = f"According to Game Theory, you should choose: {best_choice}"
+
+    Element("result").element.innerText = result
+  </py-script>
+</body>
+</html>
