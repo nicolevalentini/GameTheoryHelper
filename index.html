@@ -1,130 +1,223 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Game Theory Decision Tool</title>
-
-  <!-- PyScript -->
-  <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
-  <script defer src="https://pyscript.net/latest/pyscript.js"></script>
-
-  <!-- Custom CSS Styling -->
-  <style>
-    body {
-      font-family: "Segoe UI", sans-serif;
-      background-color: #f9f9f9;
-      color: #333;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-    }
-
-    .container {
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-      max-width: 500px;
-      width: 90%;
-    }
-
-    h1 {
-      text-align: center;
-      color: #4a90e2;
-      margin-bottom: 20px;
-    }
-
-    label {
-      font-weight: 600;
-      margin-top: 10px;
-      display: block;
-    }
-
-    input[type="text"] {
-      width: 100%;
-      padding: 10px;
-      margin-top: 5px;
-      margin-bottom: 15px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 14px;
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      background-color: #4a90e2;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-
-    button:hover {
-      background-color: #357ab7;
-    }
-
-    #result {
-      margin-top: 20px;
-      text-align: center;
-      font-size: 16px;
-      font-weight: bold;
-      color: #2c3e50;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Theory Decision Tool</title>
+    <style>
+        body {
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #4a90e2;
+            margin-bottom: 20px;
+        }
+        
+        label {
+            font-weight: 600;
+            margin-top: 15px;
+            display: block;
+            color: #555;
+        }
+        
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        
+        input[type="text"]:focus {
+            border-color: #4a90e2;
+            outline: none;
+        }
+        
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4a90e2;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background-color: #357ab7;
+        }
+        
+        #result {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 16px;
+            font-weight: bold;
+            color: #2c3e50;
+            min-height: 20px;
+            padding: 10px;
+            border-radius: 6px;
+        }
+        
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
 </head>
-
 <body>
-  <div class="container">
-    <h1>🎯 Game Theory Helper</h1>
+    <div class="container">
+        <h1>🎯 Game Theory Helper</h1>
+        
+        <label for="first">First Choice:</label>
+        <input id="first" type="text" placeholder="e.g. Studying in London">
+        
+        <label for="second">Second Choice:</label>
+        <input id="second" type="text" placeholder="e.g. Studying in Paris">
+        
+        <label for="outcomes_a">3 Outcomes for First Choice:</label>
+        <input id="outcomes_a" type="text" placeholder="e.g. friends fun love">
+        
+        <label for="values_a">3 Values (1–10) for First Choice:</label>
+        <input id="values_a" type="text" placeholder="e.g. 7 6 8">
+        
+        <label for="outcomes_b">3 Outcomes for Second Choice:</label>
+        <input id="outcomes_b" type="text" placeholder="e.g. adventure career romance">
+        
+        <label for="values_b">3 Values (1–10) for Second Choice:</label>
+        <input id="values_b" type="text" placeholder="e.g. 5 9 6">
+        
+        <button onclick="evaluateChoices()">✨ Evaluate Best Choice</button>
+        
+        <div id="result"></div>
+    </div>
 
-    <label for="first">First Choice:</label>
-    <input id="first" type="text" placeholder="e.g. Studying in London">
-
-    <label for="second">Second Choice:</label>
-    <input id="second" type="text" placeholder="e.g. Studying in Paris">
-
-    <label for="outcomes_a">3 Outcomes for First Choice:</label>
-    <input id="outcomes_a" type="text" placeholder="e.g. friends fun love">
-
-    <label for="values_a">3 Values (1–10) for First Choice:</label>
-    <input id="values_a" type="text" placeholder="e.g. 7 6 8">
-
-    <label for="outcomes_b">3 Outcomes for Second Choice:</label>
-    <input id="outcomes_b" type="text" placeholder="e.g. adventure career romance">
-
-    <label for="values_b">3 Values (1–10) for Second Choice:</label>
-    <input id="values_b" type="text" placeholder="e.g. 5 9 6">
-
-    <button onclick="evaluate()">✨ Evaluate Best Choice</button>
-
-    <p id="result"></p>
-  </div>
-
-  <py-script>
-def evaluate():
-    first = Element("first").element.value
-    second = Element("second").element.value
-    outcomes_a = Element("outcomes_a").element.value.split()
-    values_a = list(map(int, Element("values_a").element.value.split()))
-    outcomes_b = Element("outcomes_b").element.value.split()
-    values_b = list(map(int, Element("values_b").element.value.split()))
-
-    if len(values_a) != 3 or len(values_b) != 3:
-        result = "❗ You must enter exactly 3 values for each choice."
-    else:
-        max_a = max(values_a)
-        max_b = max(values_b)
-        best_choice = first if max_a >= max_b else second
-        result = f"According to Game Theory, you should choose: {best_choice}"
-
-    Element("result").element.innerText = result
-  </py-script>
+    <script>
+        function evaluateChoices() {
+            // Clear previous result
+            const resultDiv = document.getElementById("result");
+            resultDiv.className = "";
+            resultDiv.textContent = "";
+            
+            try {
+                // Get input values
+                const first = document.getElementById("first").value.trim();
+                const second = document.getElementById("second").value.trim();
+                const valuesAInput = document.getElementById("values_a").value.trim();
+                const valuesBInput = document.getElementById("values_b").value.trim();
+                
+                // Validate basic inputs
+                if (!first || !second) {
+                    showError("❗ Please enter both choices.");
+                    return;
+                }
+                
+                if (!valuesAInput || !valuesBInput) {
+                    showError("❗ Please enter values for both choices.");
+                    return;
+                }
+                
+                // Parse values - split by any whitespace and filter empty strings
+                const valuesA = valuesAInput.split(/\s+/).filter(v => v.length > 0);
+                const valuesB = valuesBInput.split(/\s+/).filter(v => v.length > 0);
+                
+                // Check if we have exactly 3 values each
+                if (valuesA.length !== 3) {
+                    showError(`❗ Please enter exactly 3 values for the first choice. You entered ${valuesA.length} values.`);
+                    return;
+                }
+                
+                if (valuesB.length !== 3) {
+                    showError(`❗ Please enter exactly 3 values for the second choice. You entered ${valuesB.length} values.`);
+                    return;
+                }
+                
+                // Convert to numbers
+                const numbersA = valuesA.map(v => parseFloat(v));
+                const numbersB = valuesB.map(v => parseFloat(v));
+                
+                // Check for invalid numbers
+                if (numbersA.some(n => isNaN(n)) || numbersB.some(n => isNaN(n))) {
+                    showError("❗ Please enter valid numbers for all values.");
+                    return;
+                }
+                
+                // Check range (1-10)
+                const allNumbers = [...numbersA, ...numbersB];
+                if (allNumbers.some(n => n < 1 || n > 10)) {
+                    showError("❗ Please enter numbers between 1 and 10.");
+                    return;
+                }
+                
+                // Calculate averages
+                const avgA = numbersA.reduce((sum, n) => sum + n, 0) / numbersA.length;
+                const avgB = numbersB.reduce((sum, n) => sum + n, 0) / numbersB.length;
+                
+                // Determine result
+                let message;
+                if (avgA > avgB) {
+                    message = `✅ According to Game Theory, you should choose: ${first} (Average Score: ${avgA.toFixed(1)})`;
+                } else if (avgB > avgA) {
+                    message = `✅ According to Game Theory, you should choose: ${second} (Average Score: ${avgB.toFixed(1)})`;
+                } else {
+                    message = `🤔 Both choices have equal scores (${avgA.toFixed(1)}). Consider other factors!`;
+                }
+                
+                showSuccess(message);
+                
+            } catch (error) {
+                console.error("Error in evaluateChoices:", error);
+                showError("❗ An unexpected error occurred. Please check your inputs.");
+            }
+        }
+        
+        function showError(message) {
+            const resultDiv = document.getElementById("result");
+            resultDiv.textContent = message;
+            resultDiv.className = "error";
+        }
+        
+        function showSuccess(message) {
+            const resultDiv = document.getElementById("result");
+            resultDiv.textContent = message;
+            resultDiv.className = "success";
+        }
+        
+        // Add Enter key support
+        document.addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                evaluateChoices();
+            }
+        });
+    </script>
 </body>
 </html>
