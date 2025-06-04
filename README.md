@@ -66,10 +66,6 @@ Quick Start
 1.	Download the files or clone this repository
 2.	Open index.html in any modern web browser
 3.	Start adding your choices and outcomes
-   
-Local Development
-# Clone the repository
-git clone https://github.com/yourusername/game-theory-helper.git
 
 # Navigate to the project directory
 cd game-theory-helper
@@ -87,6 +83,7 @@ PWA Installation
 The app can be installed as a Progressive Web App:
 1.	Visit the app in Chrome or Edge
 2.	Click the "Install" button in the address bar
+   
 Project Structure
 game-theory-helper/
 ├── index.html          # Main application file
