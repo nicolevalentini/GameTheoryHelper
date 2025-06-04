@@ -1,223 +1,465 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Theory Decision Tool</title>
-    <style>
-        body {
-            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f9f9f9;
-            color: #333;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-        
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            max-width: 500px;
-            width: 100%;
-        }
-        
-        h1 {
-            text-align: center;
-            color: #4a90e2;
-            margin-bottom: 20px;
-        }
-        
-        label {
-            font-weight: 600;
-            margin-top: 15px;
-            display: block;
-            color: #555;
-        }
-        
-        input[type="text"] {
-            width: 100%;
-            padding: 10px;
-            margin-top: 5px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 14px;
-            box-sizing: border-box;
-        }
-        
-        input[type="text"]:focus {
-            border-color: #4a90e2;
-            outline: none;
-        }
-        
-        button {
-            width: 100%;
-            padding: 12px;
-            background-color: #4a90e2;
-            color: white;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            margin-top: 10px;
-        }
-        
-        button:hover {
-            background-color: #357ab7;
-        }
-        
-        #result {
-            margin-top: 20px;
-            text-align: center;
-            font-size: 16px;
-            font-weight: bold;
-            color: #2c3e50;
-            min-height: 20px;
-            padding: 10px;
-            border-radius: 6px;
-        }
-        
-        .success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        
-        .error {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Theory Helper</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#4a90e2">
+  <link rel="icon" href="icon-192.png" type="image/png">
+  <style>
+    :root {
+      --bg: #f9f9f9;
+      --text: #333;
+      --card: #fff;
+      --accent: #4a90e2;
+      --card-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      --success-bg: #d4edda;
+      --success-text: #155724;
+      --error-bg: #f8d7da;
+      --error-text: #721c24;
+      --placeholder: #bdbdbd;
+    }
+    [data-theme="dark"] {
+      --bg: #181818;
+      --text: #eee;
+      --card: #232323;
+      --accent: #67b7f7;
+      --card-shadow: 0 10px 25px rgba(0,0,0,0.6);
+      --success-bg: #233b2a;
+      --success-text: #a2f5b6;
+      --error-bg: #4a232a;
+      --error-text: #ffb2c0;
+      --placeholder: #666;
+    }
+    html, body {
+      margin: 0; padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      transition: background 0.3s, color 0.3s;
+    }
+    .container {
+      background: var(--card);
+      box-shadow: var(--card-shadow);
+      border-radius: 12px;
+      padding: 2rem 1.5rem 1.5rem 1.5rem;
+      max-width: 640px;
+      margin: 2rem auto;
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+    h1 {
+      text-align: center;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+      letter-spacing: 1px;
+    }
+    #appDescription {
+      text-align:center; 
+      color:var(--accent); 
+      font-size:1.05em; 
+      margin-bottom:1.1rem;
+    }
+    #darkModeToggle {
+      position: absolute;
+      top: 1.2rem;
+      right: 2rem;
+      background: none;
+      border: none;
+      font-size: 1.7rem;
+      cursor: pointer;
+      color: var(--accent);
+      transition: color .3s;
+    }
+    label {
+      font-weight: 600;
+      margin-bottom: 4px;
+      display: block;
+      color: var(--text);
+    }
+    .choices-list {
+      margin: 1.5rem 0;
+    }
+    .choice-card {
+      background: var(--bg);
+      border-radius: 7px;
+      padding: 1rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 10px 0 rgba(0,0,0,0.04);
+      position: relative;
+      animation: fadeIn 0.5s;
+    }
+    .choice-card .remove-choice {
+      position: absolute;
+      right: 1rem; top: 1rem;
+      background: none; border: none; color: var(--error-text);
+      font-size: 1.2rem; cursor: pointer;
+    }
+    .outcomes-list {
+      margin: 0.8rem 0;
+    }
+    .outcome-row {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+      margin-bottom: 0.5rem;
+      animation: fadeIn 0.5s;
+    }
+    .outcome-row input[type="text"],
+    .outcome-row input[type="number"] {
+      padding: 5px 7px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 1em;
+      width: 40%;
+      box-sizing: border-box;
+      background: var(--card);
+      color: var(--text);
+      transition: border-color .2s, background .2s, color .2s;
+    }
+    .outcome-row input[type="number"]::-webkit-inner-spin-button {
+      opacity: 0.7;
+    }
+    .outcome-row .remove-outcome {
+      background: none; border: none; color: var(--error-text);
+      font-size: 1.1em; cursor: pointer;
+    }
+    .add-btn, #addChoiceBtn, #evaluateBtn, #copyBtn, #shareBtn, #downloadPdfBtn, #downloadImgBtn {
+      background: var(--accent);
+      color: #fff;
+      padding: 9px 18px;
+      border: none;
+      border-radius: 5px;
+      font-size: 1em;
+      cursor: pointer;
+      margin-right: 7px;
+      margin-top: 7px;
+      transition: background 0.2s;
+      display: inline-block;
+    }
+    .add-btn:hover, #addChoiceBtn:hover, #evaluateBtn:hover,
+    #copyBtn:hover, #shareBtn:hover, #downloadPdfBtn:hover, #downloadImgBtn:hover {
+      background: #357ab7;
+    }
+    #evaluateBtn {
+      width: 100%;
+      margin-top: 1.5rem;
+      font-size: 1.15em;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    #result {
+      margin-top: 22px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      min-height: 28px;
+      padding: 15px 6px;
+      border-radius: 8px;
+      opacity: 0;
+      transition: opacity 0.7s;
+      pointer-events: none;
+    }
+    #result.visible {
+      opacity: 1;
+      pointer-events: auto;
+      animation: fadeIn 1s;
+    }
+    .success { background: var(--success-bg); color: var(--success-text);}
+    .error { background: var(--error-bg); color: var(--error-text);}
+    #shareBtns {
+      display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; margin-top: 1rem;
+    }
+    #resultRadar {
+      margin: 1.2rem auto 0 auto; display: block; max-width: 400px; width: 100%; background: var(--card);
+      padding: 1rem; border-radius: 7px;
+      box-shadow: 0 2px 10px 0 rgba(0,0,0,0.06);
+      opacity: 0; transition: opacity 0.8s;
+    }
+    #resultRadar.visible { opacity: 1; animation: fadeIn 0.8s;}
+    #quote {
+      text-align: center; font-style: italic; margin-top: 1.5rem; color: var(--accent);
+      min-height: 30px; transition: color 0.4s;
+    }
+    input::placeholder {
+      color: var(--placeholder)!important;
+      opacity: 1!important;
+      font-style: italic;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(14px);}
+      to { opacity: 1; transform: translateY(0);}
+    }
+    @media (max-width: 700px) {
+      .container {max-width: 96vw; padding: 1.1rem;}
+      #resultRadar {max-width: 99vw;}
+    }
+    @media (max-width: 480px) {
+      h1 {font-size: 1.2em;}
+      .add-btn, #addChoiceBtn, #evaluateBtn,
+      #copyBtn, #shareBtn, #downloadPdfBtn, #downloadImgBtn {font-size: 0.98em; padding: 7px 7px;}
+      .choice-card {padding: 0.7rem;}
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🎯 Game Theory Helper</h1>
-        
-        <label for="first">First Choice:</label>
-        <input id="first" type="text" placeholder="e.g. Studying in London">
-        
-        <label for="second">Second Choice:</label>
-        <input id="second" type="text" placeholder="e.g. Studying in Paris">
-        
-        <label for="outcomes_a">3 Outcomes for First Choice:</label>
-        <input id="outcomes_a" type="text" placeholder="e.g. friends fun love">
-        
-        <label for="values_a">3 Values (1–10) for First Choice:</label>
-        <input id="values_a" type="text" placeholder="e.g. 7 6 8">
-        
-        <label for="outcomes_b">3 Outcomes for Second Choice:</label>
-        <input id="outcomes_b" type="text" placeholder="e.g. adventure career romance">
-        
-        <label for="values_b">3 Values (1–10) for Second Choice:</label>
-        <input id="values_b" type="text" placeholder="e.g. 5 9 6">
-        
-        <button onclick="evaluateChoices()">✨ Evaluate Best Choice</button>
-        
-        <div id="result"></div>
+  <button id="darkModeToggle" title="Toggle dark mode">🌙</button>
+  <div class="container">
+    <h1>🎯 Game Theory Helper</h1>
+    <div id="appDescription">
+      Enter multiple choices, and for each, list possible outcomes with a value (how good the outcome is, 1–10). Compare as many options as you want—this tool helps you decide using game theory!
     </div>
+    <div id="choicesList" class="choices-list"></div>
+    <button id="addChoiceBtn" class="add-btn">+ Add Choice</button>
+    <button id="evaluateBtn">✨ Evaluate Best Choice</button>
+    <div id="result"></div>
+    <div id="shareBtns" style="display:none;">
+      <button id="copyBtn">Copy</button>
+      <button id="shareBtn">Share</button>
+      <button id="downloadPdfBtn">Download PDF</button>
+      <button id="downloadImgBtn">Download Image</button>
+    </div>
+    <canvas id="resultRadar" height="280"></canvas>
+    <div id="quote"></div>
+  </div>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- html2canvas for screenshots -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <!-- jsPDF for PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script>
+    // --- Dark Mode ---
+    const darkToggle = document.getElementById('darkModeToggle');
+    function setTheme(theme) {
+      if (theme === 'dark') {
+        document.body.setAttribute('data-theme', 'dark');
+        darkToggle.textContent = '🌞';
+      } else {
+        document.body.removeAttribute('data-theme');
+        darkToggle.textContent = '🌙';
+      }
+      localStorage.setItem('theme', theme);
+    }
+    darkToggle.onclick = () => setTheme(document.body.hasAttribute('data-theme') ? 'light' : 'dark');
+    (function () {
+      if (window.matchMedia('(prefers-color-scheme: dark)').matches || localStorage.getItem('theme') === 'dark') setTheme('dark');
+    })();
 
-    <script>
-        function evaluateChoices() {
-            // Clear previous result
-            const resultDiv = document.getElementById("result");
-            resultDiv.className = "";
-            resultDiv.textContent = "";
-            
-            try {
-                // Get input values
-                const first = document.getElementById("first").value.trim();
-                const second = document.getElementById("second").value.trim();
-                const valuesAInput = document.getElementById("values_a").value.trim();
-                const valuesBInput = document.getElementById("values_b").value.trim();
-                
-                // Validate basic inputs
-                if (!first || !second) {
-                    showError("❗ Please enter both choices.");
-                    return;
-                }
-                
-                if (!valuesAInput || !valuesBInput) {
-                    showError("❗ Please enter values for both choices.");
-                    return;
-                }
-                
-                // Parse values - split by any whitespace and filter empty strings
-                const valuesA = valuesAInput.split(/\s+/).filter(v => v.length > 0);
-                const valuesB = valuesBInput.split(/\s+/).filter(v => v.length > 0);
-                
-                // Check if we have exactly 3 values each
-                if (valuesA.length !== 3) {
-                    showError(`❗ Please enter exactly 3 values for the first choice. You entered ${valuesA.length} values.`);
-                    return;
-                }
-                
-                if (valuesB.length !== 3) {
-                    showError(`❗ Please enter exactly 3 values for the second choice. You entered ${valuesB.length} values.`);
-                    return;
-                }
-                
-                // Convert to numbers
-                const numbersA = valuesA.map(v => parseFloat(v));
-                const numbersB = valuesB.map(v => parseFloat(v));
-                
-                // Check for invalid numbers
-                if (numbersA.some(n => isNaN(n)) || numbersB.some(n => isNaN(n))) {
-                    showError("❗ Please enter valid numbers for all values.");
-                    return;
-                }
-                
-                // Check range (1-10)
-                const allNumbers = [...numbersA, ...numbersB];
-                if (allNumbers.some(n => n < 1 || n > 10)) {
-                    showError("❗ Please enter numbers between 1 and 10.");
-                    return;
-                }
-                
-                // Calculate averages
-                const avgA = numbersA.reduce((sum, n) => sum + n, 0) / numbersA.length;
-                const avgB = numbersB.reduce((sum, n) => sum + n, 0) / numbersB.length;
-                
-                // Determine result
-                let message;
-                if (avgA > avgB) {
-                    message = `According to Game Theory, you should choose: ${first} (Average Score: ${avgA.toFixed(1)})`;
-                } else if (avgB > avgA) {
-                    message = `According to Game Theory, you should choose: ${second} (Average Score: ${avgB.toFixed(1)})`;
-                } else {
-                    message = `🤔 Both choices have equal scores (${avgA.toFixed(1)}). Consider other factors!`;
-                }
-                
-                showSuccess(message);
-                
-            } catch (error) {
-                console.error("Error in evaluateChoices:", error);
-                showError("❗ An unexpected error occurred. Please check your inputs.");
-            }
+    // --- Motivational Quotes ---
+    const quotes = [
+      "if your choices are beautiful, so too will you be - Epictetus",
+      "It is within our power not to make a judgement about something, and so not disturb our minds; for nothing in itself possesses the power to form our judgements - Marcus Aurelius"
+    ];
+    function showRandomQuote() {
+      document.getElementById('quote').textContent = quotes[Math.floor(Math.random()*quotes.length)];
+    }
+
+    // --- Choices and Outcomes (Dynamic Form) ---
+    const choicesList = document.getElementById('choicesList');
+    let choiceCount = 0;
+    function createOutcomeRow(choiceIdx, outIdx, outcome='', value='') {
+      const row = document.createElement('div');
+      row.className = 'outcome-row';
+      // Determine example outcome and value for current choice
+      const examples = [
+        [ ['friends','7'], ['fun','6'], ['love','8'] ],
+        [ ['adventure','5'], ['career','9'], ['romance','6'] ]
+      ];
+      let placeholderOutcome = 'Outcome';
+      let placeholderValue = 'Value (1-10)';
+      if (choiceIdx < examples.length && outIdx < examples[choiceIdx].length) {
+        placeholderOutcome = 'e.g. ' + examples[choiceIdx][outIdx][0];
+        placeholderValue = 'e.g. ' + examples[choiceIdx][outIdx][1];
+      }
+      row.innerHTML = `
+        <input type="text" placeholder="${placeholderOutcome}" value="${outcome}" required>
+        <input type="number" placeholder="${placeholderValue}" min="1" max="10" value="${value}" required>
+        <button type="button" class="remove-outcome" title="Remove Outcome">🗑️</button>
+      `;
+      // Remove outcome
+      row.querySelector('.remove-outcome').onclick = () => {
+        row.parentNode.removeChild(row);
+      };
+      return row;
+    }
+    function createChoiceCard(name='', outcomes=[['',''],['',''],['','']]) {
+      const idx = choiceCount++;
+      const card = document.createElement('div');
+      card.className = 'choice-card';
+      // Determine example name for this choice
+      const exampleNames = ['Studying in London', 'Studying in Paris'];
+      let placeholderName = 'Choice name';
+      if (idx < exampleNames.length) {
+        placeholderName = exampleNames[idx];
+      }
+      card.innerHTML = `
+        <button type="button" class="remove-choice" title="Remove Choice">🗑️</button>
+        <label>Choice Name:</label>
+        <input type="text" class="choice-name" placeholder="${placeholderName}" value="${name}" required>
+        <div class="outcomes-list"></div>
+        <button type="button" class="add-btn add-outcome">+ Add Outcome</button>
+      `;
+      // Remove choice
+      card.querySelector('.remove-choice').onclick = () => {
+        card.parentNode.removeChild(card);
+      };
+      // Add outcomes
+      const outcomesList = card.querySelector('.outcomes-list');
+      function addOutcomeRow(o='', v='') {
+        outcomesList.appendChild(createOutcomeRow(idx, outcomesList.children.length, o, v));
+      }
+      for (const [o,v] of outcomes) addOutcomeRow(o,v);
+      card.querySelector('.add-outcome').onclick = () => addOutcomeRow();
+      choicesList.appendChild(card);
+    }
+    document.getElementById('addChoiceBtn').onclick = () => createChoiceCard();
+
+    // Initial two choices with examples
+    createChoiceCard('e.g: Studying in London', [['e.g: friends','7'],['e.g: fun','6'],['e.g: love','8']]);
+    createChoiceCard('e.g: Studying in Paris', [['e.g: adventure','5'],['e.g: career','9'],['e.g: romance','6']]);
+
+    // --- Evaluate Choices ---
+    let radarChart = null;
+    function evaluateChoices() {
+      // Gather choices
+      const choiceCards = Array.from(choicesList.getElementsByClassName('choice-card'));
+      if (choiceCards.length < 2) {
+        showResult('❗ Please enter at least two choices.', 'error');
+        return;
+      }
+      let results = [];
+      let radarLabels = [];
+      let radarDataSets = [];
+      for (const card of choiceCards) {
+        const name = card.querySelector('.choice-name').value.trim();
+        if (!name) {
+          showResult('❗ Please enter a name for every choice.', 'error');
+          return;
         }
-        
-        function showError(message) {
-            const resultDiv = document.getElementById("result");
-            resultDiv.textContent = message;
-            resultDiv.className = "error";
+        const rows = Array.from(card.querySelectorAll('.outcome-row'));
+        if (rows.length < 1) {
+          showResult('❗ Each choice must have at least one outcome.', 'error');
+          return;
         }
-        
-        function showSuccess(message) {
-            const resultDiv = document.getElementById("result");
-            resultDiv.textContent = message;
-            resultDiv.className = "success";
+        let outcomeNames = [], values = [];
+        for (const r of rows) {
+          const o = r.children[0].value.trim();
+          const v = +r.children[1].value;
+          if (!o || isNaN(v) || v<1 || v>10) {
+            showResult('❗ All outcomes must have a name and value (1-10).', 'error');
+            return;
+          }
+          outcomeNames.push(o);
+          values.push(v);
         }
-        
-        // Add Enter key support
-        document.addEventListener('keypress', function(event) {
-            if (event.key === 'Enter') {
-                evaluateChoices();
-            }
+        const avg = values.reduce((sum, v) => sum + v, 0) / values.length;
+        results.push({name, avg, outcomeNames, values});
+        radarDataSets.push({
+          label: name,
+          data: values.slice(0,8),
+          fill: true,
+          backgroundColor: 'rgba(74, 144, 226, 0.11)',
+          borderColor: '#4a90e2'
         });
-    </script>
+        if (radarLabels.length < outcomeNames.length) radarLabels = outcomeNames;
+      }
+      // Find best
+      let best = results.reduce((a,b)=>a.avg>b.avg?a:b);
+      let winners = results.filter(r=>Math.abs(r.avg-best.avg)<0.0001);
+      let msg = '';
+      if (winners.length===1)
+        msg = `🎉 According to Game Theory, you should choose: <b>${best.name}</b> (Average: ${best.avg.toFixed(2)})`;
+      else
+        msg = `🤔 Multiple choices are equally good (Average: ${best.avg.toFixed(2)}): ` +
+          winners.map(r=>`<b>${r.name}</b>`).join(', ');
+      showResult(msg, 'success');
+      // Show radar
+      showRadarChart(radarLabels, radarDataSets);
+      showShareBtns();
+      showRandomQuote();
+    }
+    document.getElementById('evaluateBtn').onclick = evaluateChoices;
+
+    function showResult(msg, type) {
+      const result = document.getElementById('result');
+      result.className = type+' visible';
+      result.innerHTML = msg;
+      setTimeout(()=>result.classList.add('visible'), 20);
+    }
+
+    // --- Radar Chart ---
+    function showRadarChart(labels, datasets) {
+      const ctx = document.getElementById('resultRadar').getContext('2d');
+      document.getElementById('resultRadar').classList.add('visible');
+      if (radarChart) radarChart.destroy();
+      radarChart = new Chart(ctx, {
+        type: 'radar',
+        data: {labels, datasets},
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {display:true, position:'top', labels: {color: getComputedStyle(document.body).getPropertyValue('--accent')}},
+            title: {display: false}
+          },
+          scales: {
+            r: {
+              angleLines: {color: "#999"},
+              pointLabels: {color: getComputedStyle(document.body).getPropertyValue('--text')},
+              suggestedMin: 0,
+              suggestedMax: 10,
+              grid: {color: "#bbb"}
+            }
+          }
+        }
+      });
+    }
+
+    // --- Share / Export ---
+    function showShareBtns() {
+      document.getElementById('shareBtns').style.display = "";
+    }
+    document.getElementById('copyBtn').onclick = function() {
+      navigator.clipboard.writeText(document.getElementById('result').innerText);
+      showResult('📋 Copied to clipboard!', 'success');
+    };
+    document.getElementById('shareBtn').onclick = function() {
+      const text = document.getElementById('result').innerText;
+      if (navigator.share) {
+        navigator.share({title: 'Game Theory Helper', text});
+      } else {
+        showResult('Sharing not supported on this browser.', 'error');
+      }
+    };
+    document.getElementById('downloadPdfBtn').onclick = function() {
+      html2canvas(document.querySelector('.container')).then(canvas => {
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new window.jspdf.jsPDF();
+        pdf.addImage(imgData, 'PNG', 10, 10, 190, 0);
+        pdf.save("decision.pdf");
+      });
+    };
+    document.getElementById('downloadImgBtn').onclick = function() {
+      html2canvas(document.querySelector('.container')).then(canvas => {
+        const link = document.createElement('a');
+        link.download = 'decision.png';
+        link.href = canvas.toDataURL();
+        link.click();
+      });
+    };
+
+    // --- Keyboard: Enter triggers evaluation ---
+    document.addEventListener('keypress', function(event) {
+      if (event.key === 'Enter' && document.activeElement.tagName !== 'TEXTAREA') {
+        evaluateChoices();
+      }
+    });
+
+    // --- PWA: Register Service Worker ---
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js');
+    }
+  </script>
 </body>
 </html>
