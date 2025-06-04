@@ -33,6 +33,7 @@ How to Use
 5.	Export - Save or share your analysis using the export buttons
    
 Example Scenarios
+
 Study Abroad Decision:
 •	Choice 1: London (friends: 8, career: 7, cost: 4)
 •	Choice 2: Paris (adventure: 9, career: 6, cost: 6)
@@ -42,6 +43,7 @@ Career Move:
 •	Choice 2: Corporate (growth: 6, stability: 8, salary: 8)
 
 Technical Details
+
 Built With
 •	Vanilla JavaScript - No heavy frameworks, fast and lightweight
 •	Chart.js - Interactive and responsive charts
@@ -62,6 +64,7 @@ Browser Support
 •	✅ Mobile browsers (iOS Safari, Chrome Mobile)
 
 Getting Started
+
 Quick Start
 1.	Download the files or clone this repository
 2.	Open index.html in any modern web browser
@@ -80,11 +83,13 @@ npx serve .
 open http://localhost:8000
 
 PWA Installation
+
 The app can be installed as a Progressive Web App:
 1.	Visit the app in Chrome or Edge
 2.	Click the "Install" button in the address bar
    
 Project Structure
+
 game-theory-helper/
 ├── index.html          # Main application file
 ├── manifest.json       # PWA manifest
@@ -94,6 +99,7 @@ game-theory-helper/
 └── README.md          # This file
 
 Customization
+
 Themes
 The app supports automatic dark/light mode detection and manual toggling.
 
@@ -105,6 +111,7 @@ The modular JavaScript structure makes it easy to extend:
 •	Integrate with external APIs
 
 Contributing
+
 Contributions are welcome! Here are some ways you can help:
 1.	Report Bugs - Found an issue? Open an issue with details
 2.	Suggest Features - Have ideas for improvements? Let's discuss them
@@ -118,6 +125,7 @@ Development Guidelines
 •	Follow existing code style and patterns
 
 Use Cases
+
 Personal Decisions
 •	Education: University selection, course choices
 •	Career: Job offers, career pivots, skill development
